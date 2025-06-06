@@ -16,4 +16,6 @@ def main(input_path, output_path):
 if __name__ == "__main__":
     input_path = sys.argv[1]  # e.g. 'data/input.txt'
     output_path = sys.argv[2] # e.g. 'data/output'
-    main(input_path, output_path)
+    main(input_path, output_path) # Run the main function with input and output paths
+# Example usage: spark-submit wordcount.py data/input.txt data/output
+
