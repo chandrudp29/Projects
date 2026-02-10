@@ -57,6 +57,12 @@
       color: white;
       left: 50%;
       transform: translateX(-50%);
+      transition: opacity 0.3s ease;
+    }
+
+    #yesBtn:hover {
+      background: #ff2e4d;
+      transform: translateX(-50%) scale(1.1);
     }
 
     #noBtn {
@@ -67,8 +73,9 @@
 
     .hint {
       margin-top: 15px;
-      font-size: 14px;
-      color: #888;
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff4d6d;
     }
 
     .yay {
@@ -93,12 +100,58 @@
         transform: translateY(110vh) rotate(360deg);
       }
     }
+
+    .side-image {
+      position: fixed;
+      width: 200px;
+      height: 200px;
+      display: none;
+      border-radius: 15px;
+      z-index: 9999;
+      box-shadow: 0 10px 30px rgba(255,0,0,0.5);
+      background: #ffe6eb;
+      padding: 20px;
+      text-align: center;
+      font-size: 80px;
+      line-height: 160px;
+    }
+
+    .side-image.left {
+      left: 30px;
+      top: 50%;
+      margin-top: -100px;
+    }
+
+    .side-image.right {
+      right: 30px;
+      top: 50%;
+      margin-top: -100px;
+    }
+
+    .side-image.show {
+      display: block !important;
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 <body>
 
+  <!-- Background Music -->
+  <audio id="bgMusic" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="side-image left" id="leftImg">😭</div>
+  <div class="side-image right" id="rightImg">💔</div>
+
   <div class="card" id="card">
-    <h1>Manu, will you be my Valentine? 💖💞</h1>
+    <h1>Anu, will you be my Valentine? 💖💞</h1>
     <div class="sub">Choose wisely. (The “NO” button is… shy.)</div>
 
     <div class="buttons">
@@ -112,8 +165,8 @@
   <div class="card yay" id="yay">
     <h1>💖 YAY!!! 💖</h1>
     <p>Best decision ever 😘</p>
-    <img src="https://i.imgur.com/0Z8FQzF.png" width="200" />
-    <p>I love you ❤️</p>
+    <img src="https://static.vecteezy.com/system/resources/previews/001/936/488/original/couple-kissing-happy-valentine-cartoon-character-illustration-vector.jpg" width="200" />
+    <p><h1><b>Anu, I love you ❤️</b></h1></p>
   </div>
 
   <script>
@@ -122,24 +175,44 @@
     const hint = document.getElementById("hint");
     const card = document.getElementById("card");
     const yay = document.getElementById("yay");
+    const bgMusic = document.getElementById("bgMusic");
+    const leftImg = document.getElementById("leftImg");
+    const rightImg = document.getElementById("rightImg");
 
     let noCount = 0;
+
+    // Start music on first interaction
+    document.body.addEventListener('click', () => {
+      bgMusic.play().catch(e => console.log("Audio play failed:", e));
+    }, { once: true });
 
     const messages = [
       "Think again 😌",
       "Don't do this to me 💔",
       "This could be a mistake 😭",
       "Are you sure? 🥺",
+      "Please reconsider 🥹",
+      "My heart is breaking 💔",
       "Last chance 😳"
     ];
 
+    const sadEmojis = [
+      ["😢", "💔"],
+      ["😭", "😢"],
+      ["💔", "😭"],
+      ["🥺", "💔"],
+      ["😰", "😱"],
+      ["😖", "😞"],
+      ["😿", "💔"]
+    ];
+
     noBtn.addEventListener("mouseover", moveNo);
-    noBtn.addEventListener("click", moveNo);
+    noBtn.addEventListener("click", handleNoClick);
 
     function moveNo() {
       noCount++;
 
-      const x = Math.random() * 250;
+      const x = Math.random() * 550;
       const y = Math.random() * 50;
 
       noBtn.style.left = `${x}px`;
@@ -147,16 +220,52 @@
 
       hint.innerText = messages[Math.min(noCount - 1, messages.length - 1)];
 
-      if (noCount >= 5) {
+      if (noCount >= 7) {
         noBtn.style.display = "none";
         hint.innerText = "Nice try 😏";
       }
+    }
+
+    function handleNoClick() {
+      console.log("NO clicked! Count:", noCount);
+      
+      // Get emoji pair for this click
+      const emojiIndex = Math.min(noCount, sadEmojis.length - 1);
+      const [leftEmoji, rightEmoji] = sadEmojis[emojiIndex];
+      
+      console.log("Showing emojis:", leftEmoji, rightEmoji);
+      
+      // Set the emojis
+      leftImg.textContent = leftEmoji;
+      rightImg.textContent = rightEmoji;
+      
+      // Show them
+      leftImg.classList.add("show");
+      rightImg.classList.add("show");
+      
+      console.log("Emojis should be visible now!");
+      
+      // Fade YES button
+      yesBtn.style.opacity = "0.3";
+      yesBtn.style.pointerEvents = "none";
+
+      // Hide emojis and restore YES button after 2 seconds
+      setTimeout(() => {
+        leftImg.classList.remove("show");
+        rightImg.classList.remove("show");
+        yesBtn.style.opacity = "1";
+        yesBtn.style.pointerEvents = "auto";
+      }, 2000);
+
+      moveNo();
     }
 
     yesBtn.addEventListener("click", () => {
       card.style.display = "none";
       yay.style.display = "block";
       startConfetti();
+      // Play victory music
+      bgMusic.volume = 0.7;
     });
 
     function startConfetti() {
