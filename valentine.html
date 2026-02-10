@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Will you be my Valentine? 💖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffe6eb, #fff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+
+    .card {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 420px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .sub {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 30px;
+    }
+
+    .buttons {
+      position: relative;
+      height: 80px;
+    }
+
+    button {
+      padding: 12px 26px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: absolute;
+    }
+
+    #yesBtn {
+      background: #ff4d6d;
+      color: white;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #noBtn {
+      background: #eee;
+      color: #444;
+      left: 20%;
+    }
+
+    .hint {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    .yay {
+      display: none;
+    }
+
+    .yay h1 {
+      font-size: 36px;
+    }
+
+    .confetti {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: red;
+      top: -10px;
+      animation: fall 3s linear infinite;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="card">
+    <h1>Manu, will you be my Valentine? 💖💞</h1>
+    <div class="sub">Choose wisely. (The “NO” button is… shy.)</div>
+
+    <div class="buttons">
+      <button id="yesBtn">YES</button>
+      <button id="noBtn">NO</button>
+    </div>
+
+    <div class="hint" id="hint"></div>
+  </div>
+
+  <div class="card yay" id="yay">
+    <h1>💖 YAY!!! 💖</h1>
+    <p>Best decision ever 😘</p>
+    <img src="https://i.imgur.com/0Z8FQzF.png" width="200" />
+    <p>I love you ❤️</p>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const hint = document.getElementById("hint");
+    const card = document.getElementById("card");
+    const yay = document.getElementById("yay");
+
+    let noCount = 0;
+
+    const messages = [
+      "Think again 😌",
+      "Don't do this to me 💔",
+      "This could be a mistake 😭",
+      "Are you sure? 🥺",
+      "Last chance 😳"
+    ];
+
+    noBtn.addEventListener("mouseover", moveNo);
+    noBtn.addEventListener("click", moveNo);
+
+    function moveNo() {
+      noCount++;
+
+      const x = Math.random() * 250;
+      const y = Math.random() * 50;
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+
+      hint.innerText = messages[Math.min(noCount - 1, messages.length - 1)];
+
+      if (noCount >= 5) {
+        noBtn.style.display = "none";
+        hint.innerText = "Nice try 😏";
+      }
+    }
+
+    yesBtn.addEventListener("click", () => {
+      card.style.display = "none";
+      yay.style.display = "block";
+      startConfetti();
+    });
+
+    function startConfetti() {
+      for (let i = 0; i < 120; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.background =
+          ["#ff4d6d", "#ffc2d1", "#ff85a1"][Math.floor(Math.random() * 3)];
+        confetti.style.animationDuration = 2 + Math.random() * 2 + "s";
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 4000);
+      }
+    }
+  </script>
+
+</body>
+</html>
